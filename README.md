@@ -1,7 +1,4 @@
 ﻿# dororok-Django
-
-# dororok-BE
-
 ## 📠 Convention
 
 ### 🤝 Branch Naming Convention
