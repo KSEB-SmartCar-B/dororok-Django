@@ -44,8 +44,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin', admin.site.urls),
     path('test/', include(('swagger.urls', 'swagger'), namespace='swagger')),
-    path('swagger-ui/5678', include(('hello.urls', 'hello'), namespace='hello')),
-
+    path('spotify/', include(('spotify_app.urls', 'spotify'), namespace='spotify')),
 ]
 
 if settings.DEBUG:
