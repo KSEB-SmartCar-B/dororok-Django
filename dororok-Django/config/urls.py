@@ -45,6 +45,7 @@ urlpatterns = [
     path('admin', admin.site.urls),
     path('test/', include(('swagger.urls', 'swagger'), namespace='swagger')),
     path('spotify/', include(('spotify_app.urls', 'spotify'), namespace='spotify')),
+    path('crawling_app/', include(('crawling_app.urls', 'crawling_app'), namespace='crawling_app') )
 ]
 
 if settings.DEBUG:
