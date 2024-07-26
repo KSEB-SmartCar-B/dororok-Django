@@ -12,7 +12,7 @@ class TestView(APIView):
     permission_classes = [permissions.AllowAny]
     @swagger_auto_schema(manual_parameters=get_params)
     def get(self, request):
-        return Response("Swagger Test")
+        return Response("Swagger Test1")
     @swagger_auto_schema(request_body=post_params)
     def post(self, request):
         return Response("Swagger schema")
