@@ -43,8 +43,8 @@ schema_view = get_schema_view(
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('admin', admin.site.urls),
-    path('test/', include(('swagger.urls', 'swagger'), namespace='swagger')),
-    path('spotify/', include(('spotify_app.urls', 'spotify'), namespace='spotify')),
+    path('spotify/', include(('spotify.urls', 'spotify'), namespace='spotify')),
+    path('crawling/', include(('crawling.urls', 'crawling'), namespace='crawling') )
 ]
 
 if settings.DEBUG:

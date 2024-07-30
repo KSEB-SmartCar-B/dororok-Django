@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from dotenv import load_dotenv
 import os
 from pathlib import Path
+from celery import Celery
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,8 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'drf_yasg',
-    'crawling_app',
-    'spotify_app',
+    'spotify',
+    'crawling',
 ]
 
 MIDDLEWARE = [
@@ -125,11 +127,7 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+#DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-load_dotenv()
-
-SPOTIFY_CID = os.getenv('SPOTIFY_CID')
-SPOTIFY_SECRET = os.getenv('SPOTIFY_SECRET')
-
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
