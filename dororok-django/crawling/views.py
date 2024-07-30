@@ -1,12 +1,13 @@
 from django.shortcuts import render
-from crawling.models import genre_models, LastUpdate
+
+from crawling.models import LastUpdate, crawling_genre_model
 from crawling.app.update_all_genre import genre_code_map, update_all_genre
 from datetime import datetime
 
 
 def chart_view(request, genre):
     today = datetime.now().date()
-    if today.weekday() == 0:
+    if today.weekday() == 1:
         try:
             last_update = LastUpdate.objects.get(genre=genre)
             if last_update.last_updated.date() < today:
@@ -20,7 +21,7 @@ def chart_view(request, genre):
     if genre not in genre_code_map:
         return render(request, 'crawling/error.html', {'message': 'Invalid genre'})
 
-    model = genre_models[genre]
+    model = crawling_genre_model[genre]
     chart_entries = model.objects.all()
 
     chart_data = [{'rank': entry.rank, 'title': entry.title, 'singer': entry.singer,

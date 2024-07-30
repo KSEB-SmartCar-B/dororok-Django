@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 
-from crawling.models import genre_models
+from crawling.models import crawling_genre_model
 
 RANK = 45
 genre_code_map = {
@@ -65,7 +65,7 @@ def update_all_genre():
     for genre, genre_code in genre_code_map.items():
         melon_crawler = MelonGenreList(genre_code)
         titles, singers, albums, album_images = melon_crawler.crawling_chart(RANK)
-        model = genre_models[genre]
+        model = crawling_genre_model[genre]
         model.objects.all().delete()
 
         chart_entries = []
