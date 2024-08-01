@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class BaseChartEntry(models.Model):
     rank = models.IntegerField()
     title = models.CharField(max_length=255)
