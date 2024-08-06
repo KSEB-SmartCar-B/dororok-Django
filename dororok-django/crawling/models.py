@@ -4,9 +4,10 @@ from django.db import models
 class BaseChartEntry(models.Model):
     rank = models.IntegerField()
     title = models.CharField(max_length=255)
-    singer = models.CharField(max_length=100)
-    album = models.CharField(max_length=100)
+    singer = models.CharField(max_length=255)
+    album = models.CharField(max_length=255)
     album_image = models.CharField(max_length=255)
+    country = models.CharField(max_length=100, default='etc')
 
     class Meta:
         abstract = True
@@ -28,6 +29,8 @@ class LastUpdate(models.Model):
     genre = models.CharField(max_length=50, unique=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+
+#genres = ['POP', '발라드']
 
 genres = ['댄스', '발라드', '인디', '트로트', 'OST',
           'POP', 'JPOP', '재즈', '클래식', '뉴에이지',

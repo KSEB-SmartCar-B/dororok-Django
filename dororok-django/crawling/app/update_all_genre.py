@@ -1,9 +1,15 @@
+import re
+import time
+
 from bs4 import BeautifulSoup
 import requests
 
+from selenium import webdriver
 from crawling.models import crawling_genre_model
 
-RANK = 45
+
+TARGET_COUNT = 500
+
 genre_code_map = {
     '발라드': 'GN0100',
     '댄스': 'GN0200',
@@ -30,47 +36,101 @@ genre_code_map = {
 
 
 class MelonGenreList:
-    def __init__(self, genre_code):
-        self.header = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko'}
-        url = f'https://www.melon.com/genre/song_list.htm?gnrCode={genre_code}&steadyYn=Y'
-        req = requests.get(url, headers=self.header)
-        html = req.text
-        self.parse = BeautifulSoup(html, "html.parser")
+    def __init__(self, genre_code, pages):
+        self.genre_code = genre_code
+        self.pages = pages
+        self.driver = webdriver.Chrome()
 
-        self.titles = self.parse.find_all("div", {"class": "ellipsis rank01"})
-        self.singers = self.parse.find_all("div", {"class": "ellipsis rank02"})
-        self.albums = self.parse.find_all("div", {"class": "ellipsis rank03"})
-        self.albums_images = self.parse.find_all("a", {"class": "image_typeAll"})
+    def get_music_data(self, start_index, url_index):
+        urls = [
+            f'https://www.melon.com/genre/song_list.htm?gnrCode={self.genre_code}&steadyYn=Y#params%5BgnrCode%5D={self.genre_code}&params%5BdtlGnrCode%5D=&params%5BorderBy%5D=NEW&params%5BsteadyYn%5D=Y&po=pageObj&startIndex={start_index}',
+            f'https://www.melon.com/genre/song_list.htm?gnrCode={self.genre_code}&dtlGnrCode=#params%5BgnrCode%5D={self.genre_code}&params%5BdtlGnrCode%5D=&params%5BorderBy%5D=NEW&params%5BsteadyYn%5D=N&po=pageObj&startIndex={start_index}'
+        ]
 
-    def crawling_chart(self, rank):
-        title = []
-        singer = []
-        album = []
-        album_images = []
+        try:
+            self.driver.get(urls[url_index])
+            time.sleep(2)
 
-        for t in self.titles:
-            title.append(t.find('a').text)
+            html = self.driver.page_source
+            parse = BeautifulSoup(html, 'html.parser')
 
-        for s in self.singers:
-            singer.append(s.find('span', {"class": "checkEllipsis"}).text)
-        for a in self.albums:
-            album.append(a.find('a').text)
-        for ai in self.albums_images:
-            album_images.append(ai.find('img')['src'])
+            titles = parse.find_all("div", {"class": "ellipsis rank01"})
+            singers = parse.find_all("div", {"class": "ellipsis rank02"})
+            albums = parse.find_all("div", {"class": "ellipsis rank03"})
+            albums_images = parse.find_all("a", {"class": "image_typeAll"})
 
-        return title[:rank], singer[:rank], album[:rank], album_images[:rank]
+            if titles and singers and albums and albums_images:
+                return titles, singers, albums, albums_images
+        except Exception as e:
+            print(e)
+        return [], [], [], []
+
+    def numeric_genre_code(self):
+        match = re.search(r'\d+', self.genre_code)
+        if match:
+            code = int(match.group())
+            if code < 900:
+                return 'Domestic'
+            elif 1000 < code < 1500:
+                return 'Oversea'
+        return 'etc'
+
+    def crawling_chart(self, target_count):
+        title_list = []
+        singer_list = []
+        album_list = []
+        album_images_list = []
+        countries_list = []
+        start_index = 1
+        url_index = 0
+        page = 1
+
+        while len(title_list) < target_count:
+            if page > self.pages:
+                print("Maximum number of pages")
+                break
+
+            titles, singers, albums, albums_images = self.get_music_data(start_index, url_index)
+
+            if not titles or not singers or not albums:
+                url_index = 1
+                start_index = 1
+                continue
+
+            for t in titles:
+                title_list.append(t.find('a').text)
+
+            for s in singers:
+                singer_list.append(s.find('span', {"class": "checkEllipsis"}).text)
+            for a in albums:
+                album_list.append(a.find('a').text)
+            for ai in albums_images:
+                album_images_list.append(ai.find('img')['src'])
+            for _ in range(target_count):
+                countries_list.append(self.numeric_genre_code())
+
+            start_index += 50
+            page += 1
+
+        return (title_list[:TARGET_COUNT], singer_list[:TARGET_COUNT],
+                album_list[:TARGET_COUNT], album_images_list[:TARGET_COUNT], countries_list[:TARGET_COUNT])
+
+    def close(self):
+        self.driver.close()
 
 
 def update_all_genre():
     for genre, genre_code in genre_code_map.items():
-        melon_crawler = MelonGenreList(genre_code)
-        titles, singers, albums, album_images = melon_crawler.crawling_chart(RANK)
+        melon_crawler = MelonGenreList(genre_code, pages=15)
+        titles, singers, albums, album_images, countries = melon_crawler.crawling_chart(TARGET_COUNT)
         model = crawling_genre_model[genre]
         model.objects.all().delete()
+        melon_crawler.close()
 
         chart_entries = []
-        for i in range(RANK):
-            entry = model(rank=i + 1, title=titles[i], singer=singers[i], album=albums[i], album_image=album_images[i])
+        for i in range(TARGET_COUNT):
+            entry = model(rank=i + 1, title=titles[i], singer=singers[i],
+                          album=albums[i], album_image=album_images[i],country=countries[i])
             chart_entries.append(entry)
 
         model.objects.bulk_create(chart_entries)
