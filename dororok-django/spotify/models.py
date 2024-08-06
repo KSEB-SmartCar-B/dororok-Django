@@ -6,6 +6,7 @@ class BaseGenreSpotify(models.Model):
     artist = models.CharField(max_length=255)
     track_id = models.CharField(max_length=255)
     track_image = models.CharField(max_length=255, default='default.jpg')
+    country = models.CharField(max_length=255, default='etc')
 
     class Meta:
         abstract = True
@@ -24,8 +25,9 @@ def spotify_genre(genre_name):
 
 
 genres = [
-    '댄스', '발라드', '인디', '트로트', 'OST',
-    'POP', 'JPOP', '재즈', '클래식', '뉴에이지',
+ #   '댄스', '발라드', '인디', '트로트', 'OST',
+ #   'POP', 'JPOP', '재즈', '클래식',
+    '뉴에이지',
     '일렉트로니카', '국내 밴드', '해외 밴드',
     '국내 록메탈', '해외 록메탈', '국내 RBSOUL', '해외 RBSOUL',
     '국내 랩힙합', '해외 랩힙합', '국내 포크블루스', '해외 포크블루스컨트리'
