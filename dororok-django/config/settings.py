@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'spotify',
     'crawling',
+    'recommendation'
 ]
 
 MIDDLEWARE = [

@@ -44,7 +44,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin', admin.site.urls),
     path('spotify/', include(('spotify.urls', 'spotify'), namespace='spotify')),
-    path('crawling/', include(('crawling.urls', 'crawling'), namespace='crawling') )
+    path('crawling/', include(('crawling.urls', 'crawling'), namespace='crawling')),
+    path('recommend/', include(('recommendation.urls', 'recommend'), namespace='recommend'))
 ]
 
 if settings.DEBUG:
