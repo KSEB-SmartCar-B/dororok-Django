@@ -1,125 +1,99 @@
-import os
-import time
-import django
-import spotipy
-import pandas as pd
+# import aiohttp
+#
+# from spotify.authentication.spotify_auth import get_spotify_client
+# from crawling.app.album_image_crawler import GetSpotifyImage
+#
+#
+# class SearchSpotifyMusic:
+#     def __init__(self):
+#         self.sp = get_spotify_client()
+#
+#     async def search_music(self, title, artist):
+#         track_names = []
+#         artist_names = []
+#         track_ids = []
+#
+#         if not title:
+#             track_results = self.sp.search(q=f"artist:{artist}", limit=10, type='track', market='KR')
+#         elif not artist:
+#             track_results = self.sp.search(q=f"track:{title}", limit=10, type='track', market='KR')
+#         else:
+#             track_results = self.sp.search(q=f"track:{title} artist:{artist}", limit=10, type='track', market='KR')
+#
+#         while track_results:
+#             for item in track_results['tracks']['items']:
+#                 track_id = item['id']
+#                 track_name = item['name']
+#                 artist_name = item['artists'][0]['name']
+#                 track_ids.append(track_id)
+#                 track_names.append(track_name)
+#                 artist_names.append(artist_name)
+#
+#             if track_results['tracks']['next']:
+#                 track_results = self.sp.next(track_results['tracks'])
+#             else:
+#                 track_results = None
+#         async with aiohttp.ClientSession() as session:
+#             track_images = await GetSpotifyImage().parse_track_images(session, track_ids)
+#
+#         return track_ids, track_names, artist_names, track_images
+#
+#
+# async def get_music_data(input_title, input_artist):
+#     title = input_title
+#     artist = input_artist
+#
+#     searcher = SearchSpotifyMusic()
+#     track_ids, track_names, artist_names, track_images = await searcher.search_music(title, artist)
+#     return track_names, artist_names, track_ids, track_images
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-django.setup()
-
-from django.core.exceptions import ImproperlyConfigured
+import asyncio
+import aiohttp
 from spotify.authentication.spotify_auth import get_spotify_client
-from spotify.app.audio_features import save_genres_audio_feature
-from spotify.models import genres
-
-try:
-    from crawling.models import crawling_genre_model, BaseChartEntry
-    from spotify.models import spotify_genre_model
-except ImportError as e:
-    raise ImproperlyConfigured(f"모델을 불러오는 중 오류 발생: {e}")
+from crawling.app.album_image_crawler import GetSpotifyImage
 
 
-class SearchTrackId:
+class SearchSpotifyMusic:
     def __init__(self):
         self.sp = get_spotify_client()
 
-    def parse_track_id(self, titles, singers):
+    async def search_music(self, title, artist):
+        track_names = []
+        artist_names = []
         track_ids = []
-        batch_size = 50
-        max_batches = 10  # 최대 5번의 배치 처리
 
-        for i in range(0, min(len(titles), batch_size * max_batches), batch_size):
-            batch_titles = titles[i:i + batch_size]
-            batch_singers = singers[i:i + batch_size]
-            for title, singer in zip(batch_titles, batch_singers):
-                try:
-                    track_results = self.sp.search(q=f"track:{title} artist:{singer}", limit=1, type='track', market='KR')
-                    if track_results['tracks']['items']:
-                        track_id = track_results['tracks']['items'][0]['id']
-                        track_ids.append(track_id)
-                    else:
-                        track_ids.append(None)
-                    time.sleep(0.1)
-                except Exception as e:
-                    print(f"Error while searching for track {title} by {singer}: {e}")
-                    track_ids.append(None)
-                    if isinstance(e, spotipy.exceptions.SpotifyException) and e.http_status == 429:
-                        retry_after = int(e.headers.get('Retry-After', 1))
-                        print(f"Rate limited. Retrying after {retry_after} seconds.")
-                        time.sleep(retry_after)
+        if not title:
+            track_results = self.sp.search(q=f"artist:{artist}", limit=10, type='track', market='KR')
+        elif not artist:
+            track_results = self.sp.search(q=f"track:{title}", limit=10, type='track', market='KR')
+        else:
+            track_results = self.sp.search(q=f"track:{title} artist:{artist}", limit=10, type='track', market='KR')
 
-        return track_ids
+        while track_results:
+            for item in track_results['tracks']['items']:
+                track_id = item['id']
+                track_name = item['name']
+                artist_name = item['artists'][0]['name']
+                track_ids.append(track_id)
+                track_names.append(track_name)
+                artist_names.append(artist_name)
 
+            if track_results['tracks']['next']:
+                track_results = self.sp.next(track_results['tracks'])
+            else:
+                track_results = None
 
-def extract_before_parenthesis(input_str):
-    pos = input_str.find('(')
-    if pos != -1:
-        return input_str[:pos]
-    return input_str
+        async with aiohttp.ClientSession() as session:
+            get_spotify_image = GetSpotifyImage()
+            track_images = await get_spotify_image.parse_track_images(session, track_ids)
+
+        return track_ids, track_names, artist_names, track_images
 
 
-def get_titles_and_singers_by_genre(genre):
-    try:
-        model_class = crawling_genre_model[genre]
-    except KeyError:
-        raise ImproperlyConfigured(f"장르 '{genre}'에 대한 모델을 찾을 수 없습니다.")
+async def get_music_data(input_title, input_artist):
+    title = input_title
+    artist = input_artist
 
-    entries = model_class.objects.all()
-    titles = [extract_before_parenthesis(entry.title) for entry in entries]
-    if genre == '클래식':
-        singers = ['클래식' for _ in entries]
-    else:
-        singers = [extract_before_parenthesis(entry.singer) for entry in entries]
-    return titles, singers
-
-
-def search_and_print_track_ids(genre):
-    titles, singers = get_titles_and_singers_by_genre(genre)
-    searcher = SearchTrackId()
-    track_ids = searcher.parse_track_id(titles, singers)
-
-    genre_model = spotify_genre_model[genre]
-    chart_model = crawling_genre_model[genre]
-
-    genre_model.objects.all().delete()
-
-    entries_to_create = []
-    for title, singer, track_id in zip(titles, singers, track_ids):
-        if track_id is not None:
-            track_image = 'default.jpg'
-            country = 'etc'
-            try:
-                music_entry = chart_model.objects.filter(title__icontains=title, singer__icontains=singer).first()
-                if music_entry:
-                    track_image = music_entry.album_image
-                    country = music_entry.country
-                else:
-                    print(f"Music entry for title '{title}' not found.")
-            except chart_model.DoesNotExist:
-                print(f"Music entry for title '{title}' not found.")
-
-            entries_to_create.append(
-                genre_model(
-                    title=title,
-                    artist=singer,
-                    track_id=track_id,
-                    track_image=track_image,
-                    country=country
-                )
-            )
-
-    if entries_to_create:
-        genre_model.objects.bulk_create(entries_to_create)
-
-    save_genres_audio_feature(genre)
-
-
-def search_all_genres():
-    all_genres = genres
-    for genre in all_genres:
-        print(f"Searching for genre: {genre}")
-        search_and_print_track_ids(genre)
-
-
-if __name__ == '__main__':
-    search_all_genres()
+    searcher = SearchSpotifyMusic()
+    track_ids, track_names, artist_names, track_images = await searcher.search_music(title, artist)
+    return track_names, artist_names, track_ids, track_images

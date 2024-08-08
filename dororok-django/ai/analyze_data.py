@@ -9,7 +9,6 @@ import os
 plt.rcParams['font.family'] = 'Malgun Gothic'
 plt.rcParams['axes.unicode_minus'] = False
 
-#genres = ['POP', '발라드']
 genres = [
     '댄스', '발라드', '인디', '트로트', 'OST',
     'POP', 'JPOP', '재즈', '클래식', '뉴에이지',

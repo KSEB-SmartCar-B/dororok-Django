@@ -1,10 +1,6 @@
 from django.urls import path
-from spotify.app.search_for_item import search_all_genres
-#from spotify.views.views import search_track
-#from rest_framework.routers import DefaultRouter
-
-app_name = 'spotify'
+from .views import search_music_or_artist
 
 urlpatterns = [
-    path('search/', search_all_genres, name='search_track'),
+    path('search/', search_music_or_artist, name='search_music_or_artist')
 ]
