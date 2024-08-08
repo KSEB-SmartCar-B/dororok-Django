@@ -22,7 +22,6 @@ from drf_yasg import openapi
         openapi.Parameter('precipitationType', openapi.IN_QUERY, description="Precipitation type",
                           type=openapi.TYPE_STRING),
         openapi.Parameter('MusicMode', openapi.IN_QUERY, description="Music mode", type=openapi.TYPE_STRING), ],
-
     operation_summary='뮤직 추천을 위한 사용자 정보 입력.',
     operation_description="장르(리스트), 위도/경도(현재 위치), 도/시/군구(현재위치), "
                           "날씨(맑음/흐림/구름많음), 강수(없음/비/눈/소나기), "

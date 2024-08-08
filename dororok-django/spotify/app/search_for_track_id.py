@@ -86,7 +86,7 @@ def search_and_print_track_ids(genre):
     entries_to_create = []
     for title, singer, track_id in zip(titles, singers, track_ids):
         if track_id is not None:
-            track_image = 'default.jpg'
+            track_image = 'photo/logo.png'
             country = 'etc'
             try:
                 music_entry = chart_model.objects.filter(title__icontains=title, singer__icontains=singer).first()
