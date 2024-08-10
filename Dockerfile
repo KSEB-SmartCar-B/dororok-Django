@@ -9,6 +9,7 @@ WORKDIR /usr/src/app
 COPY . .
 
 RUN pip install -r requirements.txt
+WORKDIR /usr/src/app/dororok-django
 
 CMD ["python3", "manage.py", "runserver", "0.0.0.0:8080"]
 
