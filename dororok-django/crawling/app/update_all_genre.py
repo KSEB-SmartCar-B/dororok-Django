@@ -104,7 +104,7 @@ class MelonGenreList:
                 singer_list.append(s.find('span', {"class": "checkEllipsis"}).text)
             for a in albums:
                 album_list.append(a.find('a').text)
-            for ai in albums_images:
+            for ai in albums_images[4:]:
                 album_images_list.append(ai.find('img')['src'])
             for _ in range(target_count):
                 countries_list.append(self.numeric_genre_code())

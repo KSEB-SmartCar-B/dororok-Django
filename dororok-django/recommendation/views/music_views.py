@@ -41,10 +41,11 @@ def get_user_music_info(request):
             skyCondition = request.GET.get('skyCondition')
             precipitationType = request.GET.get('precipitationType')
             MusicMode = request.GET.get('MusicMode')
+            DayPart = request.GET.get('dayPart')
 
             response_data = generate_music_recommendations(
                 genre, lat, lng, region1depthName, region2depthName, region3depthName,
-                skyCondition, precipitationType, MusicMode
+                skyCondition, precipitationType, MusicMode, DayPart
             )
 
             return JsonResponse(response_data, status=200)
@@ -56,9 +57,9 @@ def get_user_music_info(request):
 
 def generate_music_recommendations(genre, lat, lng, region1depth_name,
                                    region2depth_name, region3depth_name,
-                                   sky_condition, precipitation_type, music_mode):
+                                   sky_condition, precipitation_type, music_mode, Daypart):
     print(genre, lat, lng, region1depth_name, region2depth_name,
-          region3depth_name, sky_condition, precipitation_type, music_mode)
+          region3depth_name, sky_condition, precipitation_type, music_mode, Daypart)
 
     test = 'test'
     return {'recommendations': test}

@@ -12,6 +12,7 @@ class BaseGenreSpotify(models.Model):
         abstract = True
         app_label = 'spotify'
 
+
 def spotify_genre(genre_name):
     class Meta:
         db_table = f'{genre_name.upper()}_entry'
@@ -25,8 +26,8 @@ def spotify_genre(genre_name):
 
 
 genres = [
- #   '댄스', '발라드', '인디', '트로트', 'OST',
- #   'POP', 'JPOP', '재즈', '클래식',
+    '댄스', '발라드', '인디', '트로트', 'OST',
+    'POP', 'JPOP', '재즈', '클래식',
     '뉴에이지',
     '일렉트로니카', '국내 밴드', '해외 밴드',
     '국내 록메탈', '해외 록메탈', '국내 RBSOUL', '해외 RBSOUL',
