@@ -7,6 +7,7 @@ RUN pip install --upgrade pip
 WORKDIR /usr/src/app
 
 COPY . .
+COPY /home/KSEB/.env /usr/src/app/dororok-django/.env
 
 RUN pip install -r requirements.txt
 WORKDIR /usr/src/app/dororok-django
