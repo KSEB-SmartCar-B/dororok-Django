@@ -52,10 +52,9 @@ class AudioFeature:
         return result_df
 
 
-
 def get_track_data_from_genre(genre):
     GenreModel = spotify_genre_model[genre]
-    return GenreModel.objects.values_list('title', 'track_id')
+    return GenreModel.objects.values_list('title', 'artist', 'track_id', 'track_image', 'country')
 
 
 def save_genres_audio_feature(genre):
@@ -63,7 +62,7 @@ def save_genres_audio_feature(genre):
 
     print(f"Processing genre: {genre}")
     track_data = get_track_data_from_genre(genre)
-    track_df = pd.DataFrame(list(track_data), columns=['title', 'track_id'])
+    track_df = pd.DataFrame(list(track_data), columns=['title', 'artist', 'track_id', 'track_image', 'country'])
 
     features_df = audio_feature.track_feature(track_df=track_df)
     directory = 'ai/genre_audio_feature'
@@ -79,4 +78,3 @@ def save_genres_audio_feature(genre):
     except OSError as e:
         print(f"Error saving file: {e}")
     print(features_df.head())
-
