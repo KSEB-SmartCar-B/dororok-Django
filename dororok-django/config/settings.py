@@ -150,5 +150,4 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 SPOTIFY_CID = os.getenv('SPOTIFY_CID')
 SPOTIFY_SECRET = os.getenv('SPOTIFY_SECRET')
-
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
