@@ -112,10 +112,10 @@ if __name__ == '__main__':
         region1depth_name='강원도',
         region2depth_name='강릉시',
         region3depth_name='몰라',
-        sky_condition='맑음',
-        precipitation='뭐지',
-        music_mode='leave_work',
-        day_part='6to9',
+        sky_condition='흐림',
+        precipitation='비',
+        music_mode='dororok',
+        day_part='6to12',
         is_first=True
     )
     generate_music_recommendations(params, is_first=True)

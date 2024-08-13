@@ -11,7 +11,7 @@ from recommendation.music_recommender.params.params import MusicRecommendationPa
 from recommendation.music_recommender.genre_filter import filter_recommendations_by_genre
 from recommendation.geo_utils.is_near_sea import nearby_sea
 from recommendation.music_recommender.sea_love_friendship import with_lover_or_friend
-
+from recommendation.music_recommender.dororok_recommendation import dororok_recommendation
 
 def recommend_music(params: MusicRecommendationParams):
     mode_to_function = {
@@ -55,7 +55,6 @@ def recommend_leave_work_music(params: MusicRecommendationParams):
     filtered_recommendations = leave_work_list[['title', 'artist', 'track_id', 'album_image']].to_dict(orient='records')
     return filtered_recommendations
 
-
 #바다, energy, valance, dancebility 평균 높은 것
 #위치가 바다면 바다로 학습하고, 높은 거
 #위치가 바다가 아니면 높은 거
@@ -90,9 +89,18 @@ def recommend_drive_music(params: MusicRecommendationParams):
     return filtered_recommendations
 
 
-#바다, 날씨, 시간, 강수, 하늘 상태
+#바다, 날씨, 시간, 강수
+#날씨 맑음/흐림/구름 많음
+#시간 6to12, 12to18, 18to24, 24to6
+#강수 없음, 비, 눈, 소나기
+#
 def recommend_dororok_music(params: MusicRecommendationParams):
-    return "Recommended dororok music"
+    if nearby_sea(params.region1depth_name, params.lat, params.lng):
+        music_list = with_lover_or_friend("바다", params.member_id)
+    else:
+        music_list = get_recommendation_list(params.member_id)
+    filtered_recommendation = dororok_recommendation(music_list, params)
+    return filtered_recommendation
 
 
 #달달한 노래 모델 학습, 달달한 노래 평균값을 input
