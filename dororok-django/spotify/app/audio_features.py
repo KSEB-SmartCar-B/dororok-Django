@@ -62,7 +62,9 @@ def save_genres_audio_feature(genre):
 
     print(f"Processing genre: {genre}")
     track_data = get_track_data_from_genre(genre)
-    track_df = pd.DataFrame(list(track_data), columns=['title', 'artist', 'track_id', 'track_image', 'country'])
+    track_df = pd.DataFrame(list(track_data), columns=['title', 'artist', 'track_id', 'album_image', 'country'])
+
+    track_df['genre'] = genre
 
     features_df = audio_feature.track_feature(track_df=track_df)
     directory = 'ai/genre_audio_feature'
@@ -78,3 +80,17 @@ def save_genres_audio_feature(genre):
     except OSError as e:
         print(f"Error saving file: {e}")
     print(features_df.head())
+
+genres = [
+    '댄스', '발라드', '인디', '트로트', 'OST',
+    'POP', 'JPOP', '재즈', '클래식',
+    '뉴에이지',
+    '일렉트로니카', '국내 밴드', '해외 밴드',
+    '국내 록메탈', '해외 록메탈', '국내 RBSOUL', '해외 RBSOUL',
+    '국내 랩힙합', '해외 랩힙합', '국내 포크블루스', '해외 포크블루스컨트리'
+]
+
+
+if __name__ == '__main__':
+    for genre in genres:
+        save_genres_audio_feature(genre)

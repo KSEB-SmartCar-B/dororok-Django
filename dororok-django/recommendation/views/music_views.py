@@ -3,11 +3,16 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from recommendation.music_recommender.params.params import MusicRecommendationParams
+from recommendation.music_recommender.personalized_music_recommender import recommend_music
+
+
 
 
 @swagger_auto_schema(
     method='get',
     manual_parameters=[
+        openapi.Parameter('member_id', openapi.IN_QUERY, description="Member ID", type=openapi.TYPE_INTEGER),
         openapi.Parameter('genre', openapi.IN_QUERY, description="Music genres",
                           type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING)),  # 타입 설정 수정
         openapi.Parameter('lat', openapi.IN_QUERY, description="Latitude", type=openapi.TYPE_NUMBER),
@@ -22,18 +27,20 @@ from drf_yasg import openapi
         openapi.Parameter('precipitationType', openapi.IN_QUERY, description="Precipitation type",
                           type=openapi.TYPE_STRING),
         openapi.Parameter('MusicMode', openapi.IN_QUERY, description="Music mode", type=openapi.TYPE_STRING),
-        openapi.Parameter('dayPart', openapi.IN_QUERY, description="Day part", type=openapi.TYPE_STRING)
+        openapi.Parameter('dayPart', openapi.IN_QUERY, description="Day part", type=openapi.TYPE_STRING),
+        openapi.Parameter('is_first', openapi.IN_QUERY, description="Number of songs", type=openapi.TYPE_INTEGER)
     ],
     operation_summary='뮤직 추천을 위한 사용자 정보 입력.',
     operation_description="장르(리스트), 위도/경도(현재 위치), 도/시/군구(현재위치), "
                           "날씨(맑음/흐림/구름많음), 강수(없음/비/눈/소나기), "
-                          "뮤직모드(도로록PICK, 일상, 출근, 퇴근, 여행, 드라이브, 데이트, 친구들과)."
+                          "뮤직모드(dororok, daily, to_work, leave_work, travel, drive, with_lover, with_friends)."
 )
 @api_view(['GET'])
 @csrf_exempt
 def get_user_music_info(request):
     if request.method == 'GET':
         try:
+            member_id = request.GET.get('member_id')
             genre = request.GET.getlist('genre', [])  # Query Parameters로 데이터 추출
             lat = request.GET.get('lat')
             lng = request.GET.get('lng')
@@ -44,24 +51,33 @@ def get_user_music_info(request):
             precipitationType = request.GET.get('precipitationType')
             MusicMode = request.GET.get('MusicMode')
             DayPart = request.GET.get('dayPart')
+            is_first = request.GET.get('isFirst')
 
-            response_data = generate_music_recommendations(
-                genre, lat, lng, region1depthName, region2depthName, region3depthName,
-                skyCondition, precipitationType, MusicMode, DayPart
+            params = MusicRecommendationParams(
+                member_id=member_id,
+                genre=genre,
+                lat=float(lat),
+                lng=float(lng),
+                region1depth_name=region1depthName,
+                region2depth_name=region2depthName,
+                region3depth_name=region3depthName,
+                sky_condition=skyCondition,
+                precipitation=precipitationType,
+                music_mode=MusicMode,
+                day_part=DayPart,
+                is_first=is_first
             )
 
+            response_data = generate_music_recommendations(params)
             return JsonResponse(response_data, status=200)
+
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 
-def generate_music_recommendations(genre, lat, lng, region1depth_name,
-                                   region2depth_name, region3depth_name,
-                                   sky_condition, precipitation_type, music_mode, Daypart):
-    print(genre, lat, lng, region1depth_name, region2depth_name,
-          region3depth_name, sky_condition, precipitation_type, music_mode, Daypart)
+def generate_music_recommendations(params: MusicRecommendationParams):
 
-    test = 'test'
-    return {'recommendations': test}
+    recommendations = recommend_music(params)
+    return {'recommendations': recommendations}
