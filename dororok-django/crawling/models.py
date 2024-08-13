@@ -30,11 +30,12 @@ class LastUpdate(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
 
-genres = ['댄스', '발라드', '인디', '트로트', 'OST',
-          'POP', 'JPOP', '재즈', '클래식', '뉴에이지',
-          '일렉트로니카', '국내 밴드', '해외 밴드',
-          '국내 록메탈', '해외 록메탈', '국내 RBSOUL', '해외 RBSOUL',
-          '국내 랩힙합', '해외 랩힙합', '국내 포크블루스', '해외 포크블루스컨트리']
+genres = (['댄스', '발라드', '인디', '트로트', 'OST',
+           'POP', 'JPOP', '재즈', '클래식', '뉴에이지',
+           '일렉트로니카', '국내 밴드', '해외 밴드',
+           '국내 록메탈', '해외 록메탈', '국내 RBSOUL', '해외 RBSOUL',
+           '국내 랩힙합', '해외 랩힙합', '국내 포크블루스', '해외 포크블루스컨트리'])
+  #        ,'바다', '우정', '사랑'])
 
 crawling_genre_model = {
     genre: genre_model(genre) for genre in genres

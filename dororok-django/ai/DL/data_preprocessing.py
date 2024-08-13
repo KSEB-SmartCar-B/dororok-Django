@@ -25,7 +25,7 @@ def preprocess_data(directory, encoding='utf-8-sig'):
     data = load_and_merge_csvs(directory, encoding=encoding)
 
     # 불필요한 열 제거, 장르와 필요한 피처만 남김
-    columns_to_drop = ['title', 'artist', 'track_id', 'track_image', 'country', 'type', 'id', 'uri',
+    columns_to_drop = ['title', 'artist', 'track_id', 'album_image', 'country', 'type', 'id', 'uri',
                        'track_href', 'analysis_url', 'duration_ms', 'time_signature']
     audio_features = data.drop(columns=columns_to_drop)
 

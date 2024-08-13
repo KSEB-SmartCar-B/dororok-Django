@@ -3,7 +3,7 @@ from dataclasses import dataclass
 @dataclass
 class MusicRecommendationParams:
     member_id: int
-    genre: str
+    genre: []
     lat: float
     lng: float
     region1depth_name: str

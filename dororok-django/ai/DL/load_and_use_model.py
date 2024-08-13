@@ -57,7 +57,7 @@ def recommend_songs(user_audio_features_list, embedding_model, scaler, data, sca
 
     # 추천 결과에서 중복된 곡 제거
     recommended_songs = data.iloc[recommended_indices][
-        ['title', 'artist', 'track_image', 'track_id', 'danceability', 'energy', 'loudness', 'speechiness', 'acousticness',
+        ['title', 'artist', 'album_image', 'track_id', 'danceability', 'energy', 'loudness', 'speechiness', 'acousticness',
          'instrumentalness', 'liveness', 'valence', 'tempo', 'genre']]
     recommended_songs = recommended_songs.drop_duplicates(subset=['track_id']).head(50)
 
@@ -66,9 +66,9 @@ def recommend_songs(user_audio_features_list, embedding_model, scaler, data, sca
 
 def load_and_use_model(user_audio_features_list):
     # 4. 모델과 스케일러 로드
-    model_path = os.path.join(BASE_DIR, 'DL/triplet_model_full.keras')
-    scaler_path = os.path.join(BASE_DIR, 'DL/scaler_params_full.npz')
-    base_network_path = os.path.join(BASE_DIR, 'DL/base_network_full.keras')
+    model_path = os.path.join(BASE_DIR, 'DL/Model/advance/triplet_model_advance.keras')
+    scaler_path = os.path.join(BASE_DIR, 'DL/Model/advance/scaler_params.npz')
+    base_network_path = os.path.join(BASE_DIR, 'DL/Model/advance/base_network_advance.keras')
 
     loaded_model, loaded_scaler = load_model_and_scaler(model_path, scaler_path)
 
