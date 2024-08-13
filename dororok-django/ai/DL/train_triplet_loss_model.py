@@ -10,13 +10,13 @@ data, scaled_features, labels, scaler = preprocess_data(directory)
 
 # Triplet 배치 생성기 함수
 def triplet_batch_generator(data, labels, batch_size=128):
-    max_index = len(data) - 1  # 최대 인덱스는 7031
+    max_index = len(data) - 1  # 최대 인덱스는 7031, 169 , 7200
     while True:
         triplets = []
         triplet_set = set()
 
         while len(triplets) < batch_size:
-            i = np.random.randint(0, max_index + 1)  # 인덱스 범위를 0 ~ 7031로 제한
+            i = np.random.randint(0, max_index + 1)  # 인덱스 범위를 0 ~ 7200
             anchor = data[i]
             anchor_label = labels[i]
 
@@ -55,7 +55,7 @@ def create_base_network(input_shape):
     model = models.Model(input, x)
     return model
 
-def triplet_loss(y_true, y_pred, alpha=0.2):
+def triplet_loss(y_true, y_pred, alpha=0.4):
     anchor, positive, negative = y_pred[:, 0], y_pred[:, 1], y_pred[:, 2]
     pos_dist = tf.reduce_sum(tf.square(anchor - positive), axis=1)
     neg_dist = tf.reduce_sum(tf.square(anchor - negative), axis=1)
@@ -96,7 +96,7 @@ early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=1
 model.fit(
     triplet_batch_generator(scaled_features, labels, batch_size=batch_size),
     steps_per_epoch=steps_per_epoch,
-    epochs=500,
+    epochs=1000,
     validation_data=val_batch_generator,
     validation_steps=validation_steps,
     callbacks=[early_stopping]
@@ -105,7 +105,7 @@ model.fit(
 # 모델과 스케일러 저장
 def save_model(model, scaler, model_path, scaler_path):
     model.save(model_path)
-    base_network.save('base_network_full.keras')
+    base_network.save('base_network_advance.keras')
     np.savez(scaler_path, mean_=scaler.mean_, scale_=scaler.scale_)
 
-save_model(model, scaler, 'triplet_model_full.keras', 'scaler_params_full.npz')
+save_model(model, scaler, 'Model/advance/triplet_model_advance.keras', 'Model/advance/scaler_params.npz')

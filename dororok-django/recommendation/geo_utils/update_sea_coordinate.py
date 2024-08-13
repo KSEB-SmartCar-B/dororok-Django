@@ -8,9 +8,9 @@ django.setup()
 from recommendation.models import SeaCoordinate
 
 
-
 def import_sea_coordinates():
-    file_path = 'sea_coordinate/sea_coordinate.csv'
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_dir, 'sea_coordinate/sea_coordinate.csv')
 
     with open(file_path, newline='', encoding='utf-8-sig') as csvfile:
         reader = csv.DictReader(csvfile)

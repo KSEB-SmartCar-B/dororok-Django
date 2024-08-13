@@ -1,12 +1,16 @@
 import os
 import django
+import numpy as np
+import pandas as pd
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
-from recommendation.music_recommender.favorite_audio_feature import get_favorite_and_listen_tracks_audio_features
+from recommendation.music_recommender.favorite_audio_feature import basic_recommendation_music
 from recommendation.music_recommender.params.params import MusicRecommendationParams
-from recommendation.music_recommender.genre_filter import filter_recommendations_by_genre, save_recommendations_to_csv
+from recommendation.music_recommender.genre_filter import filter_recommendations_by_genre
+from recommendation.geo_utils.is_near_sea import nearby_sea
+from recommendation.music_recommender.sea_love_friendship import with_lover_or_friend
 
 
 def recommend_music(params: MusicRecommendationParams):
@@ -27,46 +31,78 @@ def recommend_music(params: MusicRecommendationParams):
 
 
 def get_recommendation_list(member_id: int):
-    recommendation_music_list = []
-    recommendation_music_list = get_favorite_and_listen_tracks_audio_features(member_id)
+    recommendation_music_list = basic_recommendation_music(member_id)
+    return recommendation_music_list
 
-    filtered_list = filter_recommendations_by_genre(recommendation_music_list, member_id)
-    save_recommendations_to_csv(recommendation_music_list, filtered_list, member_id)
 
-if __name__ == '__main__':
-    get_recommendation_list(2)
-
+#추천 그대로
 def recommend_daily_music(params: MusicRecommendationParams):
+    daily_list = filter_recommendations_by_genre(get_recommendation_list(params.member_id), params.member_id)
+    filtered_recommendations = daily_list[['title', 'artist', 'track_id', 'album_image']].to_dict(orient='records')
+    return filtered_recommendations
 
-    return "Recommended daily music"
 
-
+#enery 높은 순서
 def recommend_to_work_music(params: MusicRecommendationParams):
-    return "Recommended to-work music"
+    work_list = filter_recommendations_by_genre(get_recommendation_list(params.member_id), params.member_id)
+    filtered_recommendations = work_list[['title', 'artist', 'track_id', 'album_image']].to_dict(orient='records')
+    return filtered_recommendations
 
 
+#valance 높은 순서
 def recommend_leave_work_music(params: MusicRecommendationParams):
-    return "Recommended leave-work music"
+    leave_work_list = filter_recommendations_by_genre(get_recommendation_list(params.member_id), params.member_id)
+    filtered_recommendations = leave_work_list[['title', 'artist', 'track_id', 'album_image']].to_dict(orient='records')
+    return filtered_recommendations
 
 
+#바다, energy, valance, dancebility 평균 높은 것
+#위치가 바다면 바다로 학습하고, 높은 거
+#위치가 바다가 아니면 높은 거
 def recommend_travel_music(params: MusicRecommendationParams):
-    return "Recommended travel music"
+    if nearby_sea(params.region1depth_name, params.lat, params.lng):
+        travel_music = with_lover_or_friend("바다", params.member_id)
+    else:
+        travel_music = get_recommendation_list(params.member_id)
 
+    if isinstance(travel_music, list):
+        travel_music = pd.DataFrame(travel_music)
+    travel_music['average_score'] = travel_music[['energy', 'valence', 'danceability']].mean(axis=1)
+    drive_recommended_songs = travel_music.sort_values(by='average_score', ascending=False)
+    filtered_recommendations = drive_recommended_songs[['title', 'artist', 'track_id', 'album_image']].to_dict(orient='records')
 
+    return filtered_recommendations
+
+#바다, tempo, energy, dancebility 높은 것
+#위치가 바다면 바다로 학습하고, 높은 거
+#위치가 바다가 아니면 높은 거
 def recommend_drive_music(params: MusicRecommendationParams):
-    return "Recommended drive music"
+    if nearby_sea(params.region1depth_name, params.lat, params.lng):
+        drive_music = with_lover_or_friend("바다", params.member_id)
+    else:
+        drive_music = get_recommendation_list(params.member_id)
+    if isinstance(drive_music, list):
+        drive_music = pd.DataFrame(drive_music)
+
+    drive_music['average_score'] = drive_music[['tempo', 'energy', 'danceability']].mean(axis=1)
+    drive_recommended_songs = drive_music.sort_values(by='average_score', ascending=False)
+    filtered_recommendations = drive_recommended_songs[['title', 'artist', 'track_id', 'album_image']].to_dict(orient='records')
+    return filtered_recommendations
 
 
+#바다, 날씨, 시간, 강수, 하늘 상태
 def recommend_dororok_music(params: MusicRecommendationParams):
     return "Recommended dororok music"
 
 
+#달달한 노래 모델 학습, 달달한 노래 평균값을 input
 def recommend_with_lover_music(params: MusicRecommendationParams):
-    return "Recommended with-lover music"
+    return with_lover_or_friend("사랑", params.member_id)
 
 
+#우정 플리 모델 학습, 우정 플리 평균값 input
 def recommend_with_friends_music(params: MusicRecommendationParams):
-    return "Recommended with-friends music"
+    return with_lover_or_friend("우정", params.member_id)
 
 
 def handle_invalid_mode(music_mode):

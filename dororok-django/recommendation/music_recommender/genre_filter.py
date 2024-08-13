@@ -30,13 +30,8 @@ genre_id_map = {
 def filter_recommendations_by_genre(recommended_songs, member_id):
     # 사용자의 선호 장르 ID 가져오기
     user_genre_ids = DororokFavoriteGenre.objects.filter(member_id=member_id).values_list('genre_id', flat=True)
-
     # 장르 ID를 장르 이름으로 변환
     user_genres = [genre_id_map[str(genre_id)] for genre_id in user_genre_ids if str(genre_id) in genre_id_map]
-
-    print(f"User Genre IDs: {user_genre_ids}")
-    print(f"User Genres: {user_genres}")
-
     # 추천된 노래에서 사용자가 선호하는 장르만 필터링
     filtered_songs = recommended_songs[recommended_songs['genre'].isin(user_genres)]
 
