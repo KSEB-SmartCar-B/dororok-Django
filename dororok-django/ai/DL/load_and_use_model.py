@@ -40,29 +40,21 @@ data, scaled_features, labels, _ = preprocess_data(directory)
 
 # 3. 사용자가 입력한 여러 오디오 피처의 평균 임베딩을 계산하고 가장 가까운 곡 추천
 def recommend_songs(user_audio_features_list, embedding_model, scaler, data, scaled_features):
-    # 사용자의 여러 오디오 피처를 정규화
+
     scaled_user_features = scaler.transform(user_audio_features_list)
-
-    # 사용자의 피처들을 임베딩 공간으로 변환
     user_embeddings = embedding_model.predict(scaled_user_features)
-
-    # 임베딩들의 평균 계산
     avg_user_embedding = np.mean(user_embeddings, axis=0)
-
-    # 모든 곡의 피처를 임베딩 공간으로 변환
     song_embeddings = embedding_model.predict(scaled_features)
-
-    # 임베딩 공간에서 가장 가까운 곡 추천
     distances = np.linalg.norm(song_embeddings - avg_user_embedding, axis=1)
     recommended_indices = np.argsort(distances)
 
-    # 추천 결과에서 중복된 곡 제거
     recommended_songs = data.iloc[recommended_indices][
         ['title', 'artist', 'album_image', 'track_id', 'danceability', 'energy', 'loudness', 'speechiness', 'acousticness',
          'instrumentalness', 'liveness', 'valence', 'tempo', 'genre']]
     recommended_songs = recommended_songs.drop_duplicates(subset=['track_id']).head(50)
 
     return recommended_songs
+
 
 
 def load_and_use_model(user_audio_features_list):

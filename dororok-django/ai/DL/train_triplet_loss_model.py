@@ -100,7 +100,7 @@ def train_and_save_model():
     model.fit(
         triplet_batch_generator(scaled_features, labels, batch_size=batch_size),
         steps_per_epoch=steps_per_epoch,
-        epochs=100,
+        epochs=1,
         validation_data=val_batch_generator,
         validation_steps=validation_steps,
         callbacks=[early_stopping]
@@ -133,3 +133,6 @@ def train_and_save_model():
 
     # 모델 저장
     save_model(model, scaler, model_path, scaler_path, base_network_path)
+
+if __name__ == '__main__':
+    train_and_save_model()

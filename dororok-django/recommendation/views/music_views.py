@@ -94,6 +94,17 @@ def get_user_music_info(request):
 def generate_music_recommendations(params: MusicRecommendationParams, is_first: bool):
     # 음악 추천 함수 호출
     recommendations = recommend_music(params)
+    print(recommendations)
+    # 반환된 recommendations가 리스트인지 확인
+    if not isinstance(recommendations, list):
+        return {'error': 'Expected recommendations to be a list, but got something else.'}
+
+    # 리스트의 각 요소가 딕셔너리인지 확인
+    for idx, rec in enumerate(recommendations):
+        if not isinstance(rec, dict):
+            return {'error': f'Expected each recommendation to be a dict, but got {type(rec)} at index {idx}.'}
+
+    recommendations = recommend_music(params)
     num_songs = 2 if is_first else 1
 
     # 필요한 필드만 포함된 결과 리스트 생성

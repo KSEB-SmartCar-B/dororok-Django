@@ -95,10 +95,17 @@ def recommend_drive_music(params: MusicRecommendationParams):
 #강수 없음, 비, 눈, 소나기
 #
 def recommend_dororok_music(params: MusicRecommendationParams):
+    # 지역에 따라 음악 리스트 생성
     if nearby_sea(params.region1depth_name, params.lat, params.lng):
         music_list = with_lover_or_friend("바다", params.member_id)
     else:
         music_list = get_recommendation_list(params.member_id)
+
+    # music_list가 DataFrame일 경우, 리스트 형태로 변환
+    if isinstance(music_list, pd.DataFrame):
+        music_list = music_list.to_dict('records')  # DataFrame을 리스트의 딕셔너리 형태로 변환
+
+    # dororok_recommendation 함수 호출
     filtered_recommendation = dororok_recommendation(music_list, params)
     return filtered_recommendation
 

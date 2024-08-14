@@ -47,30 +47,38 @@ def dororok_recommendation(music_list, params):
     weights = get_feature_weights(weather, time_of_day, precipitation)
 
     # 점수 계산
-    for music in music_list:
-        music['score'] = (
-                music['energy'] * weights['energy'] +
-                music['danceability'] * weights['danceability'] +
-                music['valence'] * weights['valence'] +
-                music['tempo'] * weights['tempo'] +
-                music['loudness'] * weights['loudness'] +
-                music['speechiness'] * weights['speechiness'] +
-                music['acousticness'] * weights['acousticness'] +
-                music['instrumentalness'] * weights['instrumentalness']
-        )
+    for i, music in enumerate(music_list):
+        # music이 딕셔너리인지 확인
+
+        try:
+            music['score'] = (
+                    music['energy'] * weights['energy'] +
+                    music['danceability'] * weights['danceability'] +
+                    music['valence'] * weights['valence'] +
+                    music['tempo'] * weights['tempo'] +
+                    music['loudness'] * weights['loudness'] +
+                    music['speechiness'] * weights['speechiness'] +
+                    music['acousticness'] * weights['acousticness'] +
+                    music['instrumentalness'] * weights['instrumentalness']
+            )
+        except KeyError as e:
+            # music 딕셔너리에 필요한 키가 없을 경우 예외 처리
+            return {"error": f"Missing expected feature: {str(e)} in music: {music}"}
 
     # 점수 기준으로 내림차순 정렬하여 상위 10곡 추천
-    recommended_songs = sorted(music_list, key=lambda x: x['score'], reverse=True)[:10]
+    recommended_songs = sorted(music_list, key=lambda x: x.get('score', 0), reverse=True)[:10]
 
     # 필요한 필드만 포함된 결과 리스트 반환
-    filtered_recommendations = [
-        {
-            'title': music['title'],
-            'artist': music['artist'],
-            'track_id': music['track_id'],
-            'album_image': music['album_image']
-        }
-        for music in recommended_songs
-    ]
+    filtered_recommendations = []
+    for music in recommended_songs:
+        if isinstance(music, dict):
+            filtered_recommendations.append({
+                'title': music.get('title', ''),
+                'artist': music.get('artist', ''),
+                'track_id': music.get('track_id', ''),
+                'album_image': music.get('album_image', '')
+            })
+        else:
+            return {"error": f"Unexpected item type in recommended_songs: {type(music)}"}
 
     return filtered_recommendations
