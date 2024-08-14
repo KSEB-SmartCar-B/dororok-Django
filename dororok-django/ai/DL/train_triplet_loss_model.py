@@ -107,6 +107,16 @@ def train_and_save_model():
     )
 
     def save_model(model, scaler, model_path, scaler_path, base_network_path):
+        # 모델을 저장할 경로가 존재하는지 확인하고, 없으면 디렉토리 생성
+        model_dir = os.path.dirname(model_path)
+        base_network_dir = os.path.dirname(base_network_path)
+
+        if not os.path.exists(model_dir):
+            os.makedirs(model_dir)
+
+        if not os.path.exists(base_network_dir):
+            os.makedirs(base_network_dir)
+
         # 전체 모델(triplet model) 저장
         model.save(model_path)
 
@@ -116,10 +126,10 @@ def train_and_save_model():
         # 스케일러 저장
         np.savez(scaler_path, mean_=scaler.mean_, scale_=scaler.scale_)
 
-    # 파일 경로 설정
-    model_path = os.path.join(base_dir, 'Model/advance/triplet_model_advance.keras')
-    scaler_path = os.path.join(base_dir, 'Model/advance/scaler_params.npz')
-    base_network_path = os.path.join(base_dir, 'Model/advance/base_network_advance.keras')
+    # 경로 설정 예시
+    model_path = '/usr/src/app/dororok-django/ai/Model/advance/triplet_model_advance.keras'
+    scaler_path = '/usr/src/app/dororok-django/ai/Model/advance/scaler_params.npz'
+    base_network_path = '/usr/src/app/dororok-django/ai/Model/advance/base_network_advance.keras'
 
     # 모델 저장
     save_model(model, scaler, model_path, scaler_path, base_network_path)
