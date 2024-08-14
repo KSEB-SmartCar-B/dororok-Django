@@ -54,6 +54,19 @@ def get_user_music_info(request):
             DayPart = request.GET.get('dayPart')
             is_first = request.GET.get('is_first').lower() == 'true'
 
+            print(f"Member ID: {member_id}")
+            print(f"Genre: {genre}")
+            print(f"Latitude: {lat}")
+            print(f"Longitude: {lng}")
+            print(f"Region1: {region1depthName}")
+            print(f"Region2: {region2depthName}")
+            print(f"Region3: {region3depthName}")
+            print(f"Sky Condition: {skyCondition}")
+            print(f"Precipitation: {precipitationType}")
+            print(f"Music Mode: {MusicMode}")
+            print(f"Day Part: {DayPart}")
+            print(f"Is First: {is_first}")
+
             params = MusicRecommendationParams(
                 member_id=member_id,
                 genre=genre,

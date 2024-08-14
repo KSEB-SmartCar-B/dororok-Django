@@ -28,24 +28,17 @@ genre_id_map = {
 
 
 def filter_recommendations_by_genre(recommended_songs, member_id):
-    # 사용자의 선호 장르 ID 가져오기
     user_genre_ids = DororokFavoriteGenre.objects.filter(member_id=member_id).values_list('genre_id', flat=True)
-    # 장르 ID를 장르 이름으로 변환
     user_genres = [genre_id_map[str(genre_id)] for genre_id in user_genre_ids if str(genre_id) in genre_id_map]
-    # 추천된 노래에서 사용자가 선호하는 장르만 필터링
     filtered_songs = recommended_songs[recommended_songs['genre'].isin(user_genres)]
 
     return filtered_songs
 
 
 def save_recommendations_to_csv(recommended_songs, filtered_songs, member_id):
-    # 파일 경로 설정
     base_dir = os.path.dirname(os.path.abspath(__file__))
     original_csv_path = os.path.join(base_dir, f"recommended_songs_{member_id}_original.csv")
     filtered_csv_path = os.path.join(base_dir, f"recommended_songs_{member_id}_filtered.csv")
 
-    # 원래의 추천 결과를 CSV로 저장
     recommended_songs.to_csv(original_csv_path, index=False, encoding='utf-8-sig')
-
-    # 필터링된 추천 결과를 CSV로 저장
     filtered_songs.to_csv(filtered_csv_path, index=False, encoding='utf-8-sig')
