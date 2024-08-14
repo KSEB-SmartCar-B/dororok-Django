@@ -94,8 +94,14 @@ model.fit(
 )
 
 def save_model(model, scaler, model_path, scaler_path):
+    # 전체 모델(triplet model) 저장
     model.save(model_path)
-    base_network.save('base_network_advance.keras')
+
+    # 베이스 네트워크 모델 저장
+    base_network.save('Model/advance/base_network_advance.keras')
+
+    # 스케일러 저장
     np.savez(scaler_path, mean_=scaler.mean_, scale_=scaler.scale_)
+
 
 save_model(model, scaler, 'Model/advance/triplet_model_advance.keras', 'Model/advance/scaler_params.npz')
