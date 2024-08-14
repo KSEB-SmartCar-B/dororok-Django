@@ -1,37 +1,27 @@
 import os
-
-
-def train_and_save_model():
-    import tensorflow as tf
-    from tensorflow.keras import layers, models
-    from ai.DL.data_preprocessing import preprocess_data
-    import numpy as np
+import tensorflow as tf
+from tensorflow.keras import layers, models
+from ai.DL.data_preprocessing import preprocess_data
+import numpy as np
 
 def train_and_save_model():
-    import tensorflow as tf
-    from tensorflow.keras import layers, models
-    from ai.DL.data_preprocessing import preprocess_data
-    import numpy as np
-
     # 데이터 로드 및 전처리 (정규화 포함)
     current_file_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # Model 디렉토리의 상위 디렉토리(즉, 'genre_audio_feature' 디렉토리가 있는 곳)의 절대 경로를 가져옴
     base_dir = os.path.dirname(current_file_dir)
-
-    # 'genre_audio_feature' 디렉토리의 절대 경로를 생성
     directory = os.path.join(base_dir, 'genre_audio_feature')
 
     print(f"'genre_audio_feature' 디렉토리의 절대 경로: {directory}")
 
-    # 해당 디렉토리가 실제로 존재하는지 확인
     if os.path.exists(directory):
         print(f"디렉토리 {directory}가 존재합니다.")
-        # 디렉토리 내부의 파일들을 출력하여 확인
         files = os.listdir(directory)
         print(f"디렉토리 내부의 파일들: {files}")
     else:
         print(f"디렉토리 {directory}가 존재하지 않습니다.")
+        return
+
+    # 데이터 전처리 수행
+    data, scaled_features, labels, scaler = preprocess_data(directory)
 
     def triplet_batch_generator(data, labels, batch_size=128):
         max_index = len(data) - 1
@@ -116,14 +106,20 @@ def train_and_save_model():
         callbacks=[early_stopping]
     )
 
-    def save_model(model, scaler, model_path, scaler_path):
+    def save_model(model, scaler, model_path, scaler_path, base_network_path):
         # 전체 모델(triplet model) 저장
         model.save(model_path)
 
         # 베이스 네트워크 모델 저장
-        base_network.save('Model/advance/base_network_advance.keras')
+        base_network.save(base_network_path)
 
         # 스케일러 저장
         np.savez(scaler_path, mean_=scaler.mean_, scale_=scaler.scale_)
 
-    save_model(model, scaler, 'Model/advance/triplet_model_advance.keras', 'Model/advance/scaler_params.npz')
+    # 파일 경로 설정
+    model_path = os.path.join(base_dir, 'Model/advance/triplet_model_advance.keras')
+    scaler_path = os.path.join(base_dir, 'Model/advance/scaler_params.npz')
+    base_network_path = os.path.join(base_dir, 'Model/advance/base_network_advance.keras')
+
+    # 모델 저장
+    save_model(model, scaler, model_path, scaler_path, base_network_path)
