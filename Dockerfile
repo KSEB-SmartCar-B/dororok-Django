@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.8.10
 
 LABEL maintainer="a1932a@naver.com"
 
