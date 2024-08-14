@@ -66,16 +66,25 @@ def recommend_songs(user_audio_features_list, embedding_model, scaler, data, sca
 
 def load_and_use_model(user_audio_features_list):
     # 4. 모델과 스케일러 로드
-    model_path = os.path.join(BASE_DIR, 'DL/Model/advance/triplet_model_advance.keras')
-    scaler_path = os.path.join(BASE_DIR, 'DL/Model/advance/scaler_params.npz')
-    base_network_path = os.path.join(BASE_DIR, 'DL/Model/advance/base_network_advance.keras')
+    model_path = os.path.join(BASE_DIR, 'Model/advance/triplet_model_advance.keras')
+    scaler_path = os.path.join(BASE_DIR, 'Model/advance/scaler_params.npz')
+    base_network_path = os.path.join(BASE_DIR, 'Model/advance/base_network_advance.keras')
+    # 예시: 모델 경로를 출력하여 확인
+    print(f"Model path: {model_path}")
+    print(f"Model path: {scaler_path}")
+    print(f"Model path: {base_network_path}")
+
+    if os.path.exists(model_path):
+        print("Model file exists.")
+    else:
+        print("Model file does not exist.")
 
     loaded_model, loaded_scaler = load_model_and_scaler(model_path, scaler_path)
 
-    # 5. 학습된 모델에서 임베딩 부분만 추출
+        # 5. 학습된 모델에서 임베딩 부분만 추출
     embedding_model = tf.keras.models.load_model(base_network_path)  # base_network 로드
 
-    # 6. 예시: 사용자가 제공한 여러 오디오 피처를 사용하여 곡 추천
+        # 6. 예시: 사용자가 제공한 여러 오디오 피처를 사용하여 곡 추천
 
     # 추천 시스템 실행
     recommended_songs = recommend_songs(user_audio_features_list, embedding_model, loaded_scaler, data, scaled_features)

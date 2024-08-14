@@ -4,12 +4,12 @@ from sklearn.model_selection import train_test_split
 from ai.DL.data_preprocessing import preprocess_data
 import numpy as np
 
+# 데이터 로드 및 전처리 (정규화 포함)
 directory = '../genre_audio_feature'
 data, scaled_features, labels, scaler = preprocess_data(directory)
 
-
 def triplet_batch_generator(data, labels, batch_size=128):
-    max_index = len(data) - 1  # 최대 인덱스는 7031, 169 , 7200
+    max_index = len(data) - 1
     while True:
         triplets = []
         triplet_set = set()
@@ -99,5 +99,3 @@ def save_model(model, scaler, model_path, scaler_path):
     np.savez(scaler_path, mean_=scaler.mean_, scale_=scaler.scale_)
 
 save_model(model, scaler, 'Model/advance/triplet_model_advance.keras', 'Model/advance/scaler_params.npz')
-
-
