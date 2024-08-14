@@ -127,9 +127,9 @@ def train_and_save_model():
         np.savez(scaler_path, mean_=scaler.mean_, scale_=scaler.scale_)
 
     # 경로 설정 예시
-    model_path = '/usr/src/app/dororok-django/ai/DL/Model/triplet_model_advance.keras'
-    scaler_path = '/usr/src/app/dororok-django/ai/DL/Model/scaler_params.npz'
-    base_network_path = '/usr/src/app/dororok-django/ai/DLModel/base_network_advance.keras'
+    model_path = '/usr/src/app/dororok-django/ai/DL/Model/advance/triplet_model_advance.keras'
+    scaler_path = '/usr/src/app/dororok-django/ai/DL/Model/advance/scaler_params.npz'
+    base_network_path = '/usr/src/app/dororok-django/ai/DL/Model/advance/base_network_advance.keras'
 
     # 모델 저장
     save_model(model, scaler, model_path, scaler_path, base_network_path)
