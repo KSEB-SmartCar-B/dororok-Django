@@ -66,9 +66,9 @@ def recommend_songs(user_audio_features_list, embedding_model, scaler, data, sca
 
 def load_and_use_model(user_audio_features_list):
     # 4. 모델과 스케일러 로드
-    model_path = os.path.join(BASE_DIR, 'Model/advance/triplet_model_advance.keras')
-    scaler_path = os.path.join(BASE_DIR, 'Model/advance/scaler_params.npz')
-    base_network_path = os.path.join(BASE_DIR, 'Model/advance/base_network_advance.keras')
+    model_path = os.path.join(BASE_DIR, 'DL/Model/advance/triplet_model_advance.keras')
+    scaler_path = os.path.join(BASE_DIR, 'DL/Model/advance/scaler_params.npz')
+    base_network_path = os.path.join(BASE_DIR, 'DL/Model/advance/base_network_advance.keras')
     # 예시: 모델 경로를 출력하여 확인
     print(f"Model path: {model_path}")
     print(f"Model path: {scaler_path}")
