@@ -10,7 +10,7 @@ from datetime import datetime
 
 def chart_view(request, genre):
     today = datetime.now().date()
-    if today.weekday() == 4:
+    if today.weekday() == 3:
          try:
              last_update = LastUpdate.objects.get(genre=genre)
              if last_update.last_updated.date() < today:
