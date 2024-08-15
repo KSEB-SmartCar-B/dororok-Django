@@ -90,7 +90,7 @@ class MelonGenreList:
 def update_all_genre():
     melon_crawler = MelonGenreList(pages=15)
     titles, singers, albums, album_images, countries = melon_crawler.crawling_chart(TARGET_COUNT)
-    model = crawling_genre_model['바다']
+    model = crawling_genre_model['사랑']
     model.objects.all().delete()
     melon_crawler.close()
 

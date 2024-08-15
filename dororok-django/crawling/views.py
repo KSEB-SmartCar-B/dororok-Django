@@ -12,13 +12,13 @@ def chart_view(request, genre):
     today = datetime.now().date()
 
     perform_update_and_analysis(genre, today)
-    # if today.weekday() == 4:
-    #     try:
-    #         last_update = LastUpdate.objects.get(genre=genre)
-    #         if last_update.last_updated.date() < today:
-    #             perform_update_and_analysis(genre, today)
-    #     except LastUpdate.DoesNotExist:
-    #         perform_update_and_analysis(genre, today)
+    if today.weekday() == 3:
+        try:
+            last_update = LastUpdate.objects.get(genre=genre)
+            if last_update.last_updated.date() < today:
+                perform_update_and_analysis(genre, today)
+        except LastUpdate.DoesNotExist:
+            perform_update_and_analysis(genre, today)
 
     if genre not in genre_code_map:
         return render(request, 'crawling/error.html', {'message': 'Invalid genre'})
@@ -40,16 +40,16 @@ def chart_view(request, genre):
 
 
 def perform_update_and_analysis(genre, today):
-    # update_all_genre()
-    # last_update, created = LastUpdate.objects.get_or_create(genre=genre)
-    # last_update.last_updated = datetime.combine(today, datetime.min.time())
-    # last_update.save()
-    # print('clear update')
-    #
-    # search_all_genres()
-    # print('clear search')
-    #
-    # analyze_data.analyze_data()
-    # print('end')
+   # update_all_genre()
+    last_update, created = LastUpdate.objects.get_or_create(genre=genre)
+    last_update.last_updated = datetime.combine(today, datetime.min.time())
+    last_update.save()
+    print('clear update')
+
+   # search_all_genres()
+    print('clear search')
+
+    analyze_data.analyze_data()
+    print('end')
 
     train_and_save_model()

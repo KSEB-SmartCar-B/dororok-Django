@@ -1,9 +1,12 @@
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.decorators import api_view
+from recommendation.place_recommender.dororok_place_recommendation import recommend_destination
 
 
 @swagger_auto_schema(
@@ -16,6 +19,7 @@ from rest_framework.decorators import api_view
     ],
     operation_summary="장소 추천을 위한 사용자 정보 입력.",
     operation_description="나이대(10대/20대 etc), 성별(male/female) "
+
 )
 @api_view(['GET'])
 @csrf_exempt
@@ -36,7 +40,12 @@ def get_user_place_info(request):
 
 
 def generate_place_recommendations(age_range, gender):
-    print(age_range, gender)
+    recommendations = recommend_destination(age_range, gender, top_n=5)
+    for i, recommendation in enumerate(recommendations, 1):
+        print(f"추천된 목적지 {i}: {recommendation}")
+    return {'recommendations': recommendations}
 
-    test = 'test'
-    return {'recommendations': test}
+
+if __name__ == '__main__':
+    generate_place_recommendations("TWENTIES", "MALE")
+

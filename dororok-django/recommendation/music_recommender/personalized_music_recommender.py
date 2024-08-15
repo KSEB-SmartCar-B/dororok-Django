@@ -45,6 +45,7 @@ def recommend_daily_music(params: MusicRecommendationParams):
 #enery 높은 순서
 def recommend_to_work_music(params: MusicRecommendationParams):
     work_list = filter_recommendations_by_genre(get_recommendation_list(params.member_id), params.member_id)
+    work_list = work_list.sort_values(by='energy', ascending=False)
     filtered_recommendations = work_list[['title', 'artist', 'track_id', 'album_image']].to_dict(orient='records')
     return filtered_recommendations
 
@@ -52,6 +53,7 @@ def recommend_to_work_music(params: MusicRecommendationParams):
 #valance 높은 순서
 def recommend_leave_work_music(params: MusicRecommendationParams):
     leave_work_list = filter_recommendations_by_genre(get_recommendation_list(params.member_id), params.member_id)
+    leave_work_list = leave_work_list.sort_values(by='energy', ascending=False)
     filtered_recommendations = leave_work_list[['title', 'artist', 'track_id', 'album_image']].to_dict(orient='records')
     return filtered_recommendations
 
