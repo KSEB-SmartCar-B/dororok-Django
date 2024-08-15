@@ -6,7 +6,6 @@ from tensorflow.keras.models import load_model
 import numpy as np
 import matplotlib.pyplot as plt
 from ai.DL.data_preprocessing import preprocess_data
-from ai.DL.train_triplet_loss_model import base_network
 
 
 def triplet_loss(y_true, y_pred, alpha=0.2):
@@ -86,6 +85,5 @@ plt.show()
 
 def save_model(model, scaler, model_path, scaler_path):
     model.save(model_path)
-    base_network.save('base_network_advance.keras')
     np.savez(scaler_path, mean_=scaler.mean_, scale_=scaler.scale_)
     save_model(model, None, 'Model/advance/triplet_model_advance.keras', 'Model/advance/scaler_params.npz')

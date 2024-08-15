@@ -92,18 +92,6 @@ def get_user_music_info(request):
 
 
 def generate_music_recommendations(params: MusicRecommendationParams, is_first: bool):
-    # 음악 추천 함수 호출
-    recommendations = recommend_music(params)
-    print(recommendations)
-    # 반환된 recommendations가 리스트인지 확인
-    if not isinstance(recommendations, list):
-        return {'error': 'Expected recommendations to be a list, but got something else.'}
-
-    # 리스트의 각 요소가 딕셔너리인지 확인
-    for idx, rec in enumerate(recommendations):
-        if not isinstance(rec, dict):
-            return {'error': f'Expected each recommendation to be a dict, but got {type(rec)} at index {idx}.'}
-
     recommendations = recommend_music(params)
     num_songs = 2 if is_first else 1
 
@@ -123,23 +111,6 @@ def generate_music_recommendations(params: MusicRecommendationParams, is_first: 
         print(f"Track ID: {rec['track_id']}")
         print(f"Album Image: {rec['album_image']}")
         print()
-    # JSON 형태로 반환
     return {'recommendations': filtered_recommendations}
 
 
-if __name__ == '__main__':
-    params = MusicRecommendationParams(
-        member_id=2,
-        genre=[1, 2, 5, 6],
-        lat=37.7948358,
-        lng=128.9193758,
-        region1depth_name='강원도',
-        region2depth_name='강릉시',
-        region3depth_name='몰라',
-        sky_condition='흐림',
-        precipitation='비',
-        music_mode='dororok',
-        day_part='6to12',
-        is_first=True
-    )
-    generate_music_recommendations(params, is_first=True)

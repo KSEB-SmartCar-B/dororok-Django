@@ -6,7 +6,7 @@ def get_feature_weights(weather, time_of_day, precipitation):
     weather_weight = {
         "맑음": {"energy": 1.2, "danceability": 1.1, "valence": 1.2, "speechiness": 0.3, "acousticness": 0.1, "instrumentalness": 0.2},
         "흐림": {"energy": 0.2, "danceability": 0.3, "valence": 0.2, "speechiness": 0.9, "acousticness": 1.0, "instrumentalness": 1.0},
-        "구름 많음": {"energy": 0.4, "danceability": 0.4, "valence": 0.5, "speechiness": 0.8, "acousticness": 0.9, "instrumentalness": 0.8}
+        "구름많음": {"energy": 0.4, "danceability": 0.4, "valence": 0.5, "speechiness": 0.8, "acousticness": 0.9, "instrumentalness": 0.8}
     }
 
     time_weight = {

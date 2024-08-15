@@ -30,7 +30,7 @@ router = routers.DefaultRouter()
 schema_view = get_schema_view(
     openapi.Info(
         title="Dororok Django API",
-        default_version='v1',
+        default_version='v2',
         description="Dororok Django API",
         contact=openapi.Contact(email="a1932a01@naver.com"),
         license=openapi.License(name="BSD License"),

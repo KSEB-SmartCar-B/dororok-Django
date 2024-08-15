@@ -5,11 +5,10 @@ import tensorflow as tf
 from sklearn.preprocessing import StandardScaler
 from ai.DL.data_preprocessing import preprocess_data  # 데이터 전처리 파일에서 가져옴
 
-pd.set_option('display.max_columns', None)  # 모든 열을 출력
-pd.set_option('display.width', None)  # 출력될 DataFrame의 너비를 제한하지 않음
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', None)
 
 
-# 1. 모델 로드 함수
 def load_model_and_scaler(model_path, scaler_path):
     def triplet_loss(y_true, y_pred, alpha=0.2):
         anchor, positive, negative = y_pred[:, 0], y_pred[:, 1], y_pred[:, 2]
@@ -20,10 +19,8 @@ def load_model_and_scaler(model_path, scaler_path):
         loss = tf.maximum(pos_dist - neg_dist + alpha, 0.0)
         return tf.reduce_mean(loss)
 
-    # 전체 모델(triplet model) 로드
     loaded_model = tf.keras.models.load_model(model_path, custom_objects={'triplet_loss': triplet_loss})
 
-    # 스케일러 로드
     scaler_params = np.load(scaler_path)
     loaded_scaler = StandardScaler()
     loaded_scaler.mean_ = scaler_params['mean_']
@@ -32,13 +29,11 @@ def load_model_and_scaler(model_path, scaler_path):
     return loaded_model, loaded_scaler
 
 
-# 2. 데이터 로드 및 전처리
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 directory = os.path.join(BASE_DIR, 'genre_audio_feature')
 data, scaled_features, labels, _ = preprocess_data(directory)
 
 
-# 3. 사용자가 입력한 여러 오디오 피처의 평균 임베딩을 계산하고 가장 가까운 곡 추천
 def recommend_songs(user_audio_features_list, embedding_model, scaler, data, scaled_features):
 
     scaled_user_features = scaler.transform(user_audio_features_list)
@@ -69,13 +64,8 @@ def load_and_use_model(user_audio_features_list):
     if not os.path.exists(base_network_path):
         raise FileNotFoundError(f"Base network file not found: {base_network_path}")
 
-    # 모델 및 스케일러 로드
     loaded_model, loaded_scaler = load_model_and_scaler(model_path, scaler_path)
-
-    # 베이스 네트워크 로드
     embedding_model = tf.keras.models.load_model(base_network_path)
-
-    # 추천 시스템 실행
     recommended_songs = recommend_songs(user_audio_features_list, embedding_model, loaded_scaler, data, scaled_features)
 
     return recommended_songs

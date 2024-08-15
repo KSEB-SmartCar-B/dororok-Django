@@ -102,5 +102,3 @@ def update_all_genre():
 
     model.objects.bulk_create(chart_entries)
 
-if __name__ == '__main__':
-    update_all_genre()

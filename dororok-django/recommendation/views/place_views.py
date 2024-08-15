@@ -6,8 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.decorators import api_view
-#from recommendation.place_recommender.dororok_place_recommendation import recommend_destination
-
+from recommendation.place_recommender.dororok_place_recommendation import recommend_region, train_model
 
 @swagger_auto_schema(
     method='get',
@@ -39,14 +38,12 @@ def get_user_place_info(request):
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 
-#def generate_place_recommendations(age_range, gender):
-#    recommendations = recommend_destination(age_range, gender, top_n=10)
-#    print(len(recommendations))
-#    for i, recommendation in enumerate(recommendations, 1):
-#        print(f"추천된 목적지 {i}: {recommendation}")
-#    return {'recommendations': recommendations}
+def generate_place_recommendations(age_range, gender):
+    model = train_model()
+    recommendations = recommend_region(model, age_range, gender, top_n=10)
+    return {'recommendations': recommendations}
 
 
-#if __name__ == '__main__':
-#    generate_place_recommendations("TWENTIES", "FEMALE")
+if __name__ == '__main__':
+    generate_place_recommendations("TWENTIES", "MALE")
 
