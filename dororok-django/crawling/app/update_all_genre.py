@@ -8,7 +8,7 @@ from selenium import webdriver
 from crawling.models import crawling_genre_model
 
 
-TARGET_COUNT = 500
+TARGET_COUNT = 1000
 
 genre_code_map = {
     '발라드': 'GN0100',
@@ -121,7 +121,7 @@ class MelonGenreList:
 
 def update_all_genre():
     for genre, genre_code in genre_code_map.items():
-        melon_crawler = MelonGenreList(genre_code, pages=15)
+        melon_crawler = MelonGenreList(genre_code, pages=50)
         titles, singers, albums, album_images, countries = melon_crawler.crawling_chart(TARGET_COUNT)
         model = crawling_genre_model[genre]
         model.objects.all().delete()

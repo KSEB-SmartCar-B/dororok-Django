@@ -44,3 +44,15 @@ class DororokFavoriteGenre(models.Model):
     class Meta:
         db_table = 'favorite_genres'
         managed = False
+
+
+class DororokDestination(models.Model):
+    age_range = models.CharField(max_length=255)
+    gender = models.CharField(max_length=255)
+    region1depth_name = models.CharField(max_length=255)
+    region2depth_name = models.CharField(max_length=255)
+    region3depth_name = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'destination'
+        managed = False

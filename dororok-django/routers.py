@@ -92,7 +92,8 @@ class DororokRouter:
         """
         if model._meta.app_label in self.route_app_labels and model._meta.model_name in ['dororokfavoritemusic',
                                                                                          'dororoklisteningmusic',
-                                                                                         'dororokfavoritegenre']:
+                                                                                         'dororokfavoritegenre',
+                                                                                         'dororokdestination']:
             return 'dororok_db'
         return None
 
@@ -102,7 +103,8 @@ class DororokRouter:
         """
         if model._meta.app_label in self.route_app_labels and model._meta.model_name in ['dororokfavoritemusic',
                                                                                          'dororoklisteningmusic',
-                                                                                         'dororokfavoritegenre']:
+                                                                                         'dororokfavoritegenre',
+                                                                                         'dororokdestination']:
             return 'dororok_db'
         return None
 
@@ -111,8 +113,8 @@ class DororokRouter:
         Allow relations if a Dororok-related model is involved.
         """
         if (
-                obj1._meta.model_name in ['dororokfavoritemusic', 'dororoklisteningmusic', 'dororokfavoritegenre'] or
-                obj2._meta.model_name in ['dororokfavoritemusic', 'dororoklisteningmusic', 'dororokfavoritegenre']
+                obj1._meta.model_name in ['dororokfavoritemusic', 'dororoklisteningmusic', 'dororokfavoritegenre', 'dororokdestination'] or
+                obj2._meta.model_name in ['dororokfavoritemusic', 'dororoklisteningmusic', 'dororokfavoritegenre', 'dororokdestination']
         ):
             return True
         return None
@@ -124,7 +126,8 @@ class DororokRouter:
         """
         if app_label in self.route_app_labels and model_name in ['dororokfavoritemusic',
                                                                  'dororoklisteningmusic',
-                                                                 'dororokfavoritegenre']:
+                                                                 'dororokfavoritegenre',
+                                                                 'dororokdestination']:
             return db == 'dororok_db'
         return None
 
