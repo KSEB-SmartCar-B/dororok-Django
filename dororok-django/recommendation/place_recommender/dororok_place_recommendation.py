@@ -46,7 +46,7 @@ def train_model():
 
     return model
 
-def recommend_region(model, age_range, gender, top_n=10):
+def recommend_region(model, age_range, gender, top_n=5):
     X_input = pd.DataFrame([[age_range, gender]], columns=['age_range', 'gender'])
     predicted_probs = model.predict_proba(X_input)[0]
     top_regions = model.classes_[predicted_probs.argsort()][::-1]  # 상위 지역 우선순위로 정렬

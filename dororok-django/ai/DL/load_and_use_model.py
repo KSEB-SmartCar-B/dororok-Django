@@ -4,7 +4,6 @@ import pandas as pd
 import tensorflow as tf
 from sklearn.preprocessing import StandardScaler
 from ai.DL.data_preprocessing import preprocess_data  # 데이터 전처리 파일에서 가져옴
-
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
 
@@ -53,6 +52,7 @@ def recommend_songs(user_audio_features_list, embedding_model, scaler, data, sca
 
 
 def load_and_use_model(user_audio_features_list):
+
     model_path = os.path.join(BASE_DIR, 'DL/Model/advance/triplet_model_advance.keras')
     scaler_path = os.path.join(BASE_DIR, 'DL/Model/advance/scaler_params.npz')
     base_network_path = os.path.join(BASE_DIR, 'DL/Model/advance/base_network_advance.keras')

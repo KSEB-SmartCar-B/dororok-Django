@@ -40,7 +40,7 @@ def get_user_place_info(request):
 
 def generate_place_recommendations(age_range, gender):
     model = train_model()
-    recommendations = recommend_region(model, age_range, gender, top_n=10)
+    recommendations = recommend_region(model, age_range, gender, top_n=5)
     return {'recommendations': recommendations}
 
 

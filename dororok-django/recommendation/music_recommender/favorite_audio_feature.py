@@ -1,6 +1,7 @@
 from ai.DL.load_and_use_model import load_and_use_model
 from recommendation.models import DororokFavoriteMusic, DororokListeningMusic
 from spotify.authentication.spotify_auth import get_spotify_client
+from recommendation.music_recommender.favorite_genres_combine_features import audio_features_base_favorite_genre
 
 
 def get_audio_features_for_tracks(track_ids):
@@ -51,7 +52,9 @@ def get_favorite_and_listen_tracks_audio_features(member_id: int):
     audio_features = get_audio_features_for_tracks(all_track_ids)
 
     audio_features.extend(favorite_audio_features)
-
+    print(audio_features)
+    if not audio_features:
+        audio_features = audio_features_base_favorite_genre(member_id)
     return audio_features
 
 
