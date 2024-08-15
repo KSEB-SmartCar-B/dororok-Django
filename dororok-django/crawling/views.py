@@ -38,16 +38,15 @@ def chart_view(request, genre):
 
 
 def perform_update_and_analysis(genre, today):
-    #update_all_genre()
-    #last_update, created = LastUpdate.objects.get_or_create(genre=genre)
-    #last_update.last_updated = datetime.combine(today, datetime.min.time())
-    #last_update.save()
-    #print('clear update')
+    update_all_genre()
+    last_update, created = LastUpdate.objects.get_or_create(genre=genre)
+    last_update.last_updated = datetime.combine(today, datetime.min.time())
+    last_update.save()
+    print('clear update')
 
-    #search_all_genres()
-    #print('clear search')
+    search_all_genres()
+    print('clear search')
 
     analyze_data.analyze_data()
     print('end')
-
     train_and_save_model()

@@ -100,7 +100,7 @@ def train_and_save_model():
     model.fit(
         triplet_batch_generator(scaled_features, labels, batch_size=batch_size),
         steps_per_epoch=steps_per_epoch,
-        epochs=1,
+        epochs=1000,
         validation_data=val_batch_generator,
         validation_steps=validation_steps,
         callbacks=[early_stopping]
