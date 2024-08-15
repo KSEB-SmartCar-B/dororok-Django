@@ -5,20 +5,11 @@ from ai.DL.data_preprocessing import preprocess_data
 import numpy as np
 
 def train_and_save_model():
-    # 데이터 로드 및 전처리 (정규화 포함)
+
     current_file_dir = os.path.dirname(os.path.abspath(__file__))
     base_dir = os.path.dirname(current_file_dir)
     directory = os.path.join(base_dir, 'genre_audio_feature')
 
-    print(f"'genre_audio_feature' 디렉토리의 절대 경로: {directory}")
-
-    if os.path.exists(directory):
-        print(f"디렉토리 {directory}가 존재합니다.")
-        files = os.listdir(directory)
-        print(f"디렉토리 내부의 파일들: {files}")
-    else:
-        print(f"디렉토리 {directory}가 존재하지 않습니다.")
-        return
 
     # 데이터 전처리 수행
     data, scaled_features, labels, scaler = preprocess_data(directory)
@@ -107,7 +98,6 @@ def train_and_save_model():
     )
 
     def save_model(model, scaler, model_path, scaler_path, base_network_path):
-        # 모델을 저장할 경로가 존재하는지 확인하고, 없으면 디렉토리 생성
         model_dir = os.path.dirname(model_path)
         base_network_dir = os.path.dirname(base_network_path)
 
@@ -117,7 +107,6 @@ def train_and_save_model():
         if not os.path.exists(base_network_dir):
             os.makedirs(base_network_dir)
 
-        # 전체 모델(triplet model) 저장
         model.save(model_path)
 
         # 베이스 네트워크 모델 저장

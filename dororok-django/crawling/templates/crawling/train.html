@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Training Progress</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        #progress-bar {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        #progress {
+            height: 30px;
+            width: 0%;
+            background-color: #4CAF50;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<h1>Model Training Progress</h1>
+<div id="progress-bar">
+    <div id="progress">0%</div>
+</div>
+<p id="status">Training in progress...</p>
+
+<script>
+    function updateProgress() {
+        fetch('/training-progress/')
+            .then(response => response.json())
+            .then(data => {
+                const progressElement = document.getElementById('progress');
+                progressElement.style.width = data.progress + '%';
+                progressElement.textContent = data.progress + '%';
+
+                if (data.done) {
+                    document.getElementById('status').textContent = 'Training Completed!';
+                    clearInterval(progressInterval);
+                }
+            });
+    }
+
+    const progressInterval = setInterval(updateProgress, 1000);
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Training Progress</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        #progress-bar {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        #progress {
+            height: 30px;
+            width: 0%;
+            background-color: #4CAF50;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<h1>Model Training Progress</h1>
+<div id="progress-bar">
+    <div id="progress">0%</div>
+</div>
+<p id="status">Training in progress...</p>
+
+<script>
+    function updateProgress() {
+        fetch('/training-progress/')
+            .then(response => response.json())
+            .then(data => {
+                const progressElement = document.getElementById('progress');
+                progressElement.style.width = data.progress + '%';
+                progressElement.textContent = data.progress + '%';
+
+                if (data.done) {
+                    document.getElementById('status').textContent = 'Training Completed!';
+                    clearInterval(progressInterval);
+                }
+            });
+    }
+
+    const progressInterval = setInterval(updateProgress, 1000);
+</script>
+</body>
+</html>

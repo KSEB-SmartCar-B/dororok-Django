@@ -6,7 +6,8 @@ from crawling.app.update_all_genre import genre_code_map, update_all_genre
 from spotify.app.search_for_track_id import search_all_genres
 from ai import analyze_data
 from datetime import datetime
-
+from django.http import JsonResponse
+import threading
 
 def chart_view(request, genre):
     today = datetime.now().date()
@@ -37,12 +38,35 @@ def chart_view(request, genre):
     return render(request, 'crawling/chart.html', {'chart_data': chart_data})
 
 
+progress = 0
+model_training_done = False
+
+
+def model_train(request):
+    global progress, model_training_done
+
+    def run_training():
+        global progress, model_training_done
+        train_and_save_model()
+        progress = 100
+        model_training_done = True
+
+    progress = 0
+    model_training_done = False
+    threading.Thread(target=run_training).start()
+
+    return render(request, 'crawling/train.html')
+
+
+def training_progress(request):
+    return JsonResponse({'progress': progress, 'done': model_training_done})
+
+
 def perform_update_and_analysis(genre, today):
     update_all_genre()
     last_update, created = LastUpdate.objects.get_or_create(genre=genre)
     last_update.last_updated = datetime.combine(today, datetime.min.time())
     last_update.save()
-    print('clear update')
 
     search_all_genres()
     print('clear search')
