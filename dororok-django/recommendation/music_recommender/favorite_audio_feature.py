@@ -1,3 +1,5 @@
+import numpy as np
+
 from ai.DL.load_and_use_model import load_and_use_model
 from recommendation.models import DororokFavoriteMusic, DororokListeningMusic
 from spotify.authentication.spotify_auth import get_spotify_client
@@ -52,9 +54,10 @@ def get_favorite_and_listen_tracks_audio_features(member_id: int):
     audio_features = get_audio_features_for_tracks(all_track_ids)
 
     audio_features.extend(favorite_audio_features)
-    print(audio_features)
     if not audio_features:
-        audio_features = audio_features_base_favorite_genre(member_id)
+        audio_features = np.array([audio_features_base_favorite_genre(member_id)])
+        audio_features = audio_features.reshape(1, -1)
+        print(audio_features)
     return audio_features
 
 
