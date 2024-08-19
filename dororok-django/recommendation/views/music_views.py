@@ -93,7 +93,7 @@ def get_user_music_info(request):
 
 def generate_music_recommendations(params: MusicRecommendationParams, is_first: bool):
     recommendations = recommend_music(params)
-    num_songs = 2 if is_first else 1
+    num_songs = 5 if is_first else 5
 
     # 필요한 필드만 포함된 결과 리스트 생성
     filtered_recommendations = [
