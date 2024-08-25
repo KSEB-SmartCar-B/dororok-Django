@@ -58,7 +58,7 @@ def dororok_recommendation(music_list, params):
         except KeyError as e:
             return {"error": f"Missing expected feature: {str(e)} in music: {music}"}
 
-    recommended_songs = sorted(music_list, key=lambda x: x.get('score', 0), reverse=True)[:10]
+    recommended_songs = sorted(music_list, key=lambda x: x.get('score', 0), reverse=True)[:30]
     print(recommended_songs)
 
     filtered_recommendations = []

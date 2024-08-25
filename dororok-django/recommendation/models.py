@@ -56,3 +56,15 @@ class DororokDestination(models.Model):
     class Meta:
         db_table = 'destination'
         managed = False
+
+
+class TrackRecommendationHistory(models.Model):
+    member_id = models.IntegerField()
+    title = models.CharField(max_length=255)
+    artist = models.CharField(max_length=255)
+    track_id = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'track_recommendation_history'
+        managed = True
+

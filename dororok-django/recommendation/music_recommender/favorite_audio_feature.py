@@ -63,4 +63,4 @@ def get_favorite_and_listen_tracks_audio_features(member_id: int):
 
 def basic_recommendation_music(member_id: int):
     audio_features = get_favorite_and_listen_tracks_audio_features(member_id)
-    return load_and_use_model(audio_features)
+    return load_and_use_model(audio_features, member_id)
