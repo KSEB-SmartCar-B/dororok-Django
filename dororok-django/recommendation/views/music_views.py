@@ -8,6 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from recommendation.music_recommender.params.params import MusicRecommendationParams
 from recommendation.music_recommender.personalized_music_recommender import recommend_music
+from recommendation.models import TrackRecommendationHistory
 
 
 @swagger_auto_schema(
@@ -93,7 +94,7 @@ def get_user_music_info(request):
 
 def generate_music_recommendations(params: MusicRecommendationParams, is_first: bool):
     recommendations = recommend_music(params)
-    num_songs = 5 if is_first else 5
+    num_songs = 2 if is_first else 1
 
     # 필요한 필드만 포함된 결과 리스트 생성
     filtered_recommendations = [
@@ -105,6 +106,14 @@ def generate_music_recommendations(params: MusicRecommendationParams, is_first: 
         }
         for rec in recommendations[:num_songs]
     ]
+    for rec in filtered_recommendations:
+        TrackRecommendationHistory.objects.create(
+            member_id=params.member_id,
+            title=rec['title'],
+            artist=rec['artist'],
+            track_id=rec['track_id']
+        )
+
     for rec in filtered_recommendations:
         print(f"Title: {rec['title']}")
         print(f"Artist: {rec['artist']}")

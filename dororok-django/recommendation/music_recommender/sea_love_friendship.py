@@ -24,7 +24,7 @@ def with_lover_or_friend(genre, member_id):
 
     mean_scaled_features = scaled_features.mean(axis=0)
 
-    initial_recommendations = load_and_use_model([mean_scaled_features])
+    initial_recommendations = load_and_use_model([mean_scaled_features], member_id)
 
     recommended_track_ids = initial_recommendations['track_id'].tolist()
     recommended_features = get_audio_features_for_tracks(recommended_track_ids)

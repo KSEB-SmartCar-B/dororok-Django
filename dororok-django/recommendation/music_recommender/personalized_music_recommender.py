@@ -53,7 +53,8 @@ def recommend_to_work_music(params: MusicRecommendationParams):
 #valance 높은 순서
 def recommend_leave_work_music(params: MusicRecommendationParams):
     leave_work_list = filter_recommendations_by_genre(get_recommendation_list(params.member_id), params.member_id)
-    leave_work_list = leave_work_list.sort_values(by='energy', ascending=False)
+    leave_work_list['average_score'] = leave_work_list[['valence', 'acousticness']].mean(axis=1)
+    leave_work_list = leave_work_list.sort_values(by='average_score', ascending=False)
     filtered_recommendations = leave_work_list[['title', 'artist', 'track_id', 'album_image']].to_dict(orient='records')
     return filtered_recommendations
 
@@ -68,7 +69,7 @@ def recommend_travel_music(params: MusicRecommendationParams):
 
     if isinstance(travel_music, list):
         travel_music = pd.DataFrame(travel_music)
-    travel_music['average_score'] = travel_music[['energy', 'valence', 'danceability']].mean(axis=1)
+    travel_music['average_score'] = travel_music[['energy', 'valence', 'danceability', 'tempo']].mean(axis=1)
     drive_recommended_songs = travel_music.sort_values(by='average_score', ascending=False)
     filtered_recommendations = drive_recommended_songs[['title', 'artist', 'track_id', 'album_image']].to_dict(orient='records')
 
@@ -85,7 +86,7 @@ def recommend_drive_music(params: MusicRecommendationParams):
     if isinstance(drive_music, list):
         drive_music = pd.DataFrame(drive_music)
 
-    drive_music['average_score'] = drive_music[['tempo', 'energy', 'danceability']].mean(axis=1)
+    drive_music['average_score'] = drive_music[['energy', 'danceability', 'acousticness']].mean(axis=1)
     drive_recommended_songs = drive_music.sort_values(by='average_score', ascending=False)
     filtered_recommendations = drive_recommended_songs[['title', 'artist', 'track_id', 'album_image']].to_dict(orient='records')
     return filtered_recommendations

@@ -4,6 +4,7 @@ import pandas as pd
 import tensorflow as tf
 from sklearn.preprocessing import StandardScaler
 from ai.DL.data_preprocessing import preprocess_data  # 데이터 전처리 파일에서 가져옴
+from recommendation.models import TrackRecommendationHistory
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
 
@@ -33,7 +34,7 @@ directory = os.path.join(BASE_DIR, 'genre_audio_feature')
 data, scaled_features, labels, _ = preprocess_data(directory)
 
 
-def recommend_songs(user_audio_features_list, embedding_model, scaler, data, scaled_features):
+def recommend_songs(user_audio_features_list, embedding_model, scaler, data, scaled_features, member_id):
 
     scaled_user_features = scaler.transform(user_audio_features_list)
     user_embeddings = embedding_model.predict(scaled_user_features)
@@ -42,16 +43,22 @@ def recommend_songs(user_audio_features_list, embedding_model, scaler, data, sca
     distances = np.linalg.norm(song_embeddings - avg_user_embedding, axis=1)
     recommended_indices = np.argsort(distances)
 
+    already_recommended_track_ids = set(
+        TrackRecommendationHistory.objects.filter(member_id=member_id)
+        .values_list('track_id', flat=True)
+    )
+
     recommended_songs = data.iloc[recommended_indices][
         ['title', 'artist', 'album_image', 'track_id', 'danceability', 'energy', 'loudness', 'speechiness', 'acousticness',
          'instrumentalness', 'liveness', 'valence', 'tempo', 'genre']]
-    recommended_songs = recommended_songs.drop_duplicates(subset=['track_id']).head(50)
+    recommended_songs = recommended_songs[~recommended_songs['track_id'].isin(already_recommended_track_ids)]
+    recommended_songs = recommended_songs.drop_duplicates(subset=['track_id']).head(100)
 
     return recommended_songs
 
 
 
-def load_and_use_model(user_audio_features_list):
+def load_and_use_model(user_audio_features_list, member_id):
 
     model_path = os.path.join(BASE_DIR, 'DL/Model/advance/triplet_model_advance.keras')
     scaler_path = os.path.join(BASE_DIR, 'DL/Model/advance/scaler_params.npz')
@@ -66,6 +73,10 @@ def load_and_use_model(user_audio_features_list):
 
     loaded_model, loaded_scaler = load_model_and_scaler(model_path, scaler_path)
     embedding_model = tf.keras.models.load_model(base_network_path)
-    recommended_songs = recommend_songs(user_audio_features_list, embedding_model, loaded_scaler, data, scaled_features)
+    recommended_songs = recommend_songs(user_audio_features_list, embedding_model, loaded_scaler, data, scaled_features,
+                                        member_id)
+
+
+
 
     return recommended_songs
